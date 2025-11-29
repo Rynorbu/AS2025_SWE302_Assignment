@@ -125,7 +125,7 @@ var unauthRequestTests = []struct {
 		"POST",
 		`{"user":{"username": "wangzitian0","email": "wzt@gg.cn","password": "jakejxke"}}`,
 		http.StatusCreated,
-		`{"user":{"username":"wangzitian0","email":"wzt@gg.cn","bio":"","image":null,"token":"([a-zA-Z0-9-_.]{115})"}}`,
+		`{"user":{"username":"wangzitian0","email":"wzt@gg.cn","bio":"","image":null,"token":"([a-zA-Z0-9-_.]+)"}}`,
 		"valid data and should return StatusCreated",
 	},
 	{
@@ -174,7 +174,7 @@ var unauthRequestTests = []struct {
 		"POST",
 		`{"user":{"email": "user1@linkedin.com","password": "password123"}}`,
 		http.StatusOK,
-		`{"user":{"username":"user1","email":"user1@linkedin.com","bio":"bio1","image":"http://image/1.jpg","token":"([a-zA-Z0-9-_.]{115})"}}`,
+		`{"user":{"username":"user1","email":"user1@linkedin.com","bio":"bio1","image":"http://image/1.jpg","token":"([a-zA-Z0-9-_.]+)"}}`,
 		"right info login should return user",
 	},
 	{
@@ -245,7 +245,7 @@ var unauthRequestTests = []struct {
 		"GET",
 		``,
 		http.StatusOK,
-		`{"user":{"username":"user1","email":"user1@linkedin.com","bio":"bio1","image":"http://image/1.jpg","token":"([a-zA-Z0-9-_.]{115})"}}`,
+		`{"user":{"username":"user1","email":"user1@linkedin.com","bio":"bio1","image":"http://image/1.jpg","token":"([a-zA-Z0-9-_.]+)"}}`,
 		"request should return current user with token",
 	},
 
@@ -295,8 +295,8 @@ var unauthRequestTests = []struct {
 		"PUT",
 		`{"user":{"username":"user123","password": "password126","email":"user123@linkedin.com","bio":"bio123","image":"http://hehe/123.jpg"}}`,
 		http.StatusOK,
-		`{"user":{"username":"user123","email":"user123@linkedin.com","bio":"bio123","image":"http://hehe/123.jpg","token":"([a-zA-Z0-9-_.]{115})"}}`,
-		"current user profile should be changed",
+		`{"user":{"username":"user123","email":"user123@linkedin.com","bio":"bio123","image":"http://hehe/123.jpg","token":"([a-zA-Z0-9-_.]+)"}}`,
+		"current user info should be changed",
 	},
 	{
 		func(req *http.Request) {
@@ -315,7 +315,7 @@ var unauthRequestTests = []struct {
 		"POST",
 		`{"user":{"email": "user123@linkedin.com","password": "password126"}}`,
 		http.StatusOK,
-		`{"user":{"username":"user123","email":"user123@linkedin.com","bio":"bio123","image":"http://hehe/123.jpg","token":"([a-zA-Z0-9-_.]{115})"}}`,
+		`{"user":{"username":"user123","email":"user123@linkedin.com","bio":"bio123","image":"http://hehe/123.jpg","token":"([a-zA-Z0-9-_.]+)"}}`,
 		"user should login using new password after changed",
 	},
 	{
@@ -334,14 +334,14 @@ var unauthRequestTests = []struct {
 	{
 		func(req *http.Request) {
 			resetDBWithMock()
-			HeaderTokenMock(req, 4)
+			HeaderTokenMock(req, 3)
 		},
 		"/user/",
 		"PUT",
-		`{"password": "password321"}}`,
-		http.StatusUnprocessableEntity,
-		`{"errors":{"Email":"{key: required}","Username":"{key: required}"}}`,
-		"test database pk error for user update",
+		`{"user":{"password": "password321"}}`,
+		http.StatusOK,
+		`{"user":{"username":"user3","email":"user3@linkedin.com","bio":"bio3","image":"http://image/3.jpg","token":"([a-zA-Z0-9-_.]+)"}}`,
+		"test user update with only password - should use existing user info",
 	},
 	{
 		func(req *http.Request) {

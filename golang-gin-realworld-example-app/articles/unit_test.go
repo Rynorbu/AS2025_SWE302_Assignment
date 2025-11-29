@@ -319,6 +319,7 @@ func TestCommentSerializer(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
+	c.Set("my_user_model", userModel)
 
 	serializer := CommentSerializer{c, commentModel}
 	response := serializer.Response()
@@ -353,6 +354,7 @@ func TestCommentSerializerWithAuthor(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
+	c.Set("my_user_model", userModel)
 
 	serializer := CommentSerializer{c, commentModel}
 	response := serializer.Response()
